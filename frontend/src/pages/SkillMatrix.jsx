@@ -282,12 +282,20 @@ const SkillMatrix = () => {
                   Editar
                 </button>
               ) : (
-                <button 
-                  onClick={exitEditMode}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                >
-                  Salir de Edición
-                </button>
+                <>
+                  <button 
+                    onClick={exitEditMode}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    Salir de Edición
+                  </button>
+                  <button 
+                    onClick={() => setShowForm(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    + Agregar Empleado
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -579,17 +587,7 @@ const SkillMatrix = () => {
                   </div>
                 </div>
                 
-                {/* Acciones */}
-                {editMode && (
-                  <div className="bg-gray-800 p-4 border-t border-gray-600">
-                    <button 
-                      onClick={() => setShowForm(true)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                    >
-                      + Agregar Empleado
-                    </button>
-                  </div>
-                )}
+
               </>
             )}
           </div>
