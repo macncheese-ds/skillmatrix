@@ -7,7 +7,7 @@ const router = Router();
 // Listar todos los empleados (público)
 router.get('/', async (_req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM empleado ORDER BY id DESC');
+  const [rows] = await pool.query('SELECT * FROM empleado ORDER BY nde ASC');
     res.json(rows);
   } catch (e) {
     console.error(e);
