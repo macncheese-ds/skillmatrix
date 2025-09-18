@@ -346,28 +346,28 @@ const SkillMatrix = () => {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3">
                 {getProcessSummary().map((proceso) => {
                   const colors = getCardColors(proceso.totalCertificados);
                   return (
-                    <div key={proceso.id} className={`${colors.cardClass} rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow`}>
-                      <h3 className={`font-medium text-sm ${colors.textColor} mb-3 leading-tight`}>
-                        {proceso.nombre.replace(/\\n/g, '\n')}
+                    <div key={proceso.id} className={`${colors.cardClass} rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow`}>
+                      <h3 className={`font-medium text-xs ${colors.textColor} mb-1 leading-tight`}>
+                        {proceso.nombre.replace(/\n/g, '\n')}
                       </h3>
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                         <div className="flex justify-between items-center">
-                          <span className={`${colors.textColor} text-sm`}>Certificados (&gt;2):</span>
-                          <span className={`font-bold text-lg ${colors.numberColor}`}>
+                          <span className={`${colors.textColor} text-xs`}>Certificados (&gt;2):</span>
+                          <span className={`font-bold text-base ${colors.numberColor}`}>
                             {proceso.totalCertificados}/{proceso.totalEmpleados}
                           </span>
                         </div>
-                        <div className="w-full bg-gray-600 rounded-full h-2">
+                        <div className="w-full bg-gray-600 rounded-full h-1">
                           <div 
-                            className={`${colors.barColor} h-2 rounded-full transition-all duration-300`}
+                            className={`${colors.barColor} h-1 rounded-full transition-all duration-300`}
                             style={{ width: `${proceso.porcentaje}%` }}
                           ></div>
                         </div>
-                        <div className={`text-center text-sm font-medium ${colors.textColor}`}>
+                        <div className={`text-center text-xs font-medium ${colors.textColor}`}>
                           {proceso.porcentaje}% del equipo
                         </div>
                       </div>
