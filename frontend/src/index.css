@@ -3,6 +3,43 @@
 @tailwind utilities;
 
 @layer base {
-  html, body, #root { height: 100%; }
-  body { background: #fff; color: #111; }
+  html, body, #root { 
+    height: 100%; 
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body { 
+    background: #fff; 
+    color: #111;
+    overscroll-behavior-y: none;
+  }
+  
+  /* Mejora táctil para móviles */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Mejora el scroll en móviles */
+  @media (max-width: 768px) {
+    body {
+      overflow-x: hidden;
+    }
+  }
+}
+
+@layer utilities {
+  /* Ocultar scrollbar pero mantener funcionalidad */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Touch-friendly buttons */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

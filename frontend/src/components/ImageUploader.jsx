@@ -87,7 +87,7 @@ const ImageUploader = ({ currentImage, onImageChange, empleadoId = null }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Preview de la imagen */}
       <div className="flex justify-center">
         <div className="relative">
@@ -96,7 +96,7 @@ const ImageUploader = ({ currentImage, onImageChange, empleadoId = null }) => {
               <img
                 src={previewImage}
                 alt="Preview"
-                className="w-32 h-32 rounded-full object-cover border-4 border-gray-600 shadow-lg"
+                className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-2 sm:border-4 border-gray-600 shadow-lg"
                 onError={() => {
                   setPreviewImage(null);
                   setUploadError('Error al cargar la imagen');
@@ -106,18 +106,18 @@ const ImageUploader = ({ currentImage, onImageChange, empleadoId = null }) => {
               <button
                 type="button"
                 onClick={removeImage}
-                className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm transition-colors"
+                className="touch-target absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-xs sm:text-sm transition-colors"
                 title="Eliminar imagen"
               >
                 ✕
               </button>
-              {/* Overlay para cambiar imagen */}
-              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-white text-xs text-center">Clic para cambiar</span>
+              {/* Overlay para cambiar imagen - Solo visible en hover en desktop */}
+              <div className="hidden sm:flex absolute inset-0 bg-black bg-opacity-50 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-white text-xs text-center px-2">Clic para cambiar</span>
               </div>
             </div>
           ) : (
-            <div className="w-32 h-32 rounded-full bg-gray-700 border-4 border-gray-600 flex items-center justify-center shadow-lg">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-700 border-2 sm:border-4 border-gray-600 flex items-center justify-center shadow-lg">
               <span className="text-gray-400 text-xs text-center">Sin imagen</span>
             </div>
           )}
@@ -125,21 +125,23 @@ const ImageUploader = ({ currentImage, onImageChange, empleadoId = null }) => {
       </div>
 
       {/* Botones de acción */}
-      <div className="flex justify-center gap-3">
+      <div className="flex justify-center gap-2 sm:gap-3">
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2"
+          className="touch-target bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-blue-400 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors flex items-center gap-2"
         >
           {isUploading ? (
             <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              Subiendo...
+              <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span className="hidden xs:inline">Subiendo...</span>
+              <span className="xs:hidden">...</span>
             </>
           ) : (
             <>
-              📷 {previewImage ? 'Cambiar' : 'Subir'} Imagen
+              📷 <span className="hidden xs:inline">{previewImage ? 'Cambiar' : 'Subir'} Imagen</span>
+              <span className="xs:hidden">{previewImage ? 'Cambiar' : 'Subir'}</span>
             </>
           )}
         </button>
@@ -156,16 +158,17 @@ const ImageUploader = ({ currentImage, onImageChange, empleadoId = null }) => {
 
       {/* Mensaje de error */}
       {uploadError && (
-        <div className="text-red-400 text-sm text-center">
+        <div className="text-red-400 text-xs sm:text-sm text-center">
           {uploadError}
         </div>
       )}
 
       {/* Información adicional */}
-      <div className="text-gray-400 text-xs text-center space-y-1">
-        <p>Formatos soportados: JPEG, PNG, GIF, WebP</p>
+      <div className="text-gray-400 text-xs text-center space-y-0.5 sm:space-y-1">
+        <p className="hidden sm:block">Formatos soportados: JPEG, PNG, GIF, WebP</p>
+        <p className="sm:hidden">JPEG, PNG, GIF, WebP</p>
         <p>Tamaño máximo: 5MB</p>
-        <p>Se ajustará automáticamente a formato circular</p>
+        <p className="hidden sm:block">Se ajustará automáticamente a formato circular</p>
       </div>
     </div>
   );

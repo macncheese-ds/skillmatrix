@@ -259,41 +259,41 @@ const SkillMatrix = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-900 min-h-screen">
+    <div className="p-2 sm:p-4 md:p-6 bg-gray-900 min-h-screen">
       <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-2xl font-bold">Matriz de Habilidades SMT</h1>
-              <p className="text-blue-200 mt-2">
+        <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-3 sm:p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
+            <div className="w-full sm:w-auto">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold">Matriz de Habilidades SMT</h1>
+              <p className="text-blue-200 mt-1 sm:mt-2 text-xs sm:text-sm md:text-base">
                 Gestión de competencias por empleado
                 {editMode && <span className="ml-2 bg-green-600 px-2 py-1 rounded text-xs">MODO EDICIÓN</span>}
               </p>
             </div>
             
             {/* Botones de acción */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto">
               {!editMode ? (
                 <button 
                   onClick={() => setShowAuthModal(true)}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  className="touch-target bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors flex-1 sm:flex-none"
                 >
-                  Editar
+                  ✏️ Editar
                 </button>
               ) : (
                 <>
                   <button 
                     onClick={exitEditMode}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    className="touch-target bg-red-600 hover:bg-red-700 active:bg-red-800 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex-1"
                   >
-                    Salir de Edición
+                    ❌ Salir
                   </button>
                   <button 
                     onClick={() => setShowForm(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    className="touch-target bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex-1"
                   >
-                    + Agregar Empleado
+                    + Agregar
                   </button>
                 </>
               )}
@@ -301,26 +301,26 @@ const SkillMatrix = () => {
           </div>
           
           {/* Navegación entre vistas */}
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-2 sm:gap-4 mt-3 sm:mt-4">
             <button 
               onClick={() => setCurrentView('resumen')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`touch-target flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
                 currentView === 'resumen' 
                   ? 'bg-white text-blue-800' 
-                  : 'bg-blue-800 hover:bg-blue-700 text-white border border-blue-600'
+                  : 'bg-blue-800 hover:bg-blue-700 active:bg-blue-600 text-white border border-blue-600'
               }`}
             >
-              📊 Resumen
+              📊 <span className="hidden xs:inline">Resumen</span>
             </button>
             <button 
               onClick={() => setCurrentView('detalle')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`touch-target flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
                 currentView === 'detalle' 
                   ? 'bg-white text-blue-800' 
-                  : 'bg-blue-800 hover:bg-blue-700 text-white border border-blue-600'
+                  : 'bg-blue-800 hover:bg-blue-700 active:bg-blue-600 text-white border border-blue-600'
               }`}
             >
-              👥 Empleados
+              👥 <span className="hidden xs:inline">Empleados</span>
             </button>
           </div>
         </div>
@@ -328,42 +328,42 @@ const SkillMatrix = () => {
         {/* Contenido según la vista actual */}
         {currentView === 'resumen' ? (
           /* VISTA RESUMEN */
-          <div className="p-6 bg-gray-800">
-            <h2 className="text-xl font-semibold mb-6 text-gray-100">Resumen de Procesos SMT</h2>
+          <div className="p-3 sm:p-4 md:p-6 bg-gray-800">
+            <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 text-gray-100">Resumen de Procesos SMT</h2>
             
             {(!empleados || empleados.length === 0) ? (
-              <div className="text-center py-12">
-                <div className="text-gray-400 text-lg mb-4">
+              <div className="text-center py-8 sm:py-12">
+                <div className="text-gray-400 text-base sm:text-lg mb-4">
                   No hay empleados registrados en el sistema
                 </div>
                 {editMode && (
                   <button 
                     onClick={() => setShowForm(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                    className="touch-target bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors"
                   >
                     + Agregar Primer Empleado
                   </button>
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
                 {getProcessSummary().map((proceso) => {
                   const colors = getCardColors(proceso.totalCertificados);
                   return (
-                    <div key={proceso.id} className={`${colors.cardClass} rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow`}>
-                      <h3 className={`font-medium text-xs ${colors.textColor} mb-1 leading-tight`}>
-                        {proceso.nombre.replace(/\n/g, '\n')}
+                    <div key={proceso.id} className={`${colors.cardClass} rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-shadow`}>
+                      <h3 className={`font-medium text-xs leading-tight ${colors.textColor} mb-2 line-clamp-3`}>
+                        {proceso.nombre.replace(/\n/g, ' ')}
                       </h3>
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         <div className="flex justify-between items-center">
-                          <span className={`${colors.textColor} text-xs`}>Certificados (&gt;2):</span>
-                          <span className={`font-bold text-base ${colors.numberColor}`}>
+                          <span className={`${colors.textColor} text-xs`}>Certificados:</span>
+                          <span className={`font-bold text-sm sm:text-base ${colors.numberColor}`}>
                             {proceso.totalCertificados}/{proceso.totalEmpleados}
                           </span>
                         </div>
-                        <div className="w-full bg-gray-600 rounded-full h-1">
+                        <div className="w-full bg-gray-600 rounded-full h-1.5">
                           <div 
-                            className={`${colors.barColor} h-1 rounded-full transition-all duration-300`}
+                            className={`${colors.barColor} h-1.5 rounded-full transition-all duration-300`}
                             style={{ width: `${proceso.porcentaje}%` }}
                           ></div>
                         </div>
@@ -381,14 +381,14 @@ const SkillMatrix = () => {
           /* VISTA DETALLE */
           <div className="bg-gray-800">
             {(!empleados || empleados.length === 0) ? (
-              <div className="p-8 text-center">
-                <div className="text-gray-400 text-lg mb-4">
+              <div className="p-4 sm:p-6 md:p-8 text-center">
+                <div className="text-gray-400 text-base sm:text-lg mb-4">
                   No hay empleados registrados en el sistema
                 </div>
                 {editMode && (
                   <button 
                     onClick={() => setShowForm(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                    className="touch-target bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors"
                   >
                     + Agregar Primer Empleado
                   </button>
@@ -397,30 +397,30 @@ const SkillMatrix = () => {
             ) : (
               <>
                 {/* Lista de empleados */}
-                <div className="p-6">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <h2 className="text-xl font-semibold text-gray-100">Empleados y Certificaciones</h2>
+                <div className="p-3 sm:p-4 md:p-6">
+                  <div className="flex flex-col gap-3 mb-4 sm:mb-6">
+                    <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-100">Empleados y Certificaciones</h2>
                     
                     {/* Barra de búsqueda */}
-                    <div className="relative">
+                    <div className="relative w-full">
                       <input
                         type="text"
-                        placeholder="Buscar por nombre, No. empleado, posición o línea..."
+                        placeholder="Buscar..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-80 pl-10 pr-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                        className="w-full pl-9 sm:pl-10 pr-10 py-2 sm:py-2.5 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 text-sm sm:text-base placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                       />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                       </div>
                       {searchQuery && (
                         <button
                           onClick={() => setSearchQuery('')}
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200"
+                          className="touch-target absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200"
                         >
-                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </button>
@@ -430,20 +430,20 @@ const SkillMatrix = () => {
                   
                   {/* Mostrar resultados de búsqueda */}
                   {searchQuery && (
-                    <div className="mb-4 text-gray-400 text-sm">
+                    <div className="mb-3 sm:mb-4 text-gray-400 text-xs sm:text-sm">
                       {filteredEmpleados.length} empleado(s) encontrado(s) para "{searchQuery}"
                     </div>
                   )}
                   
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {filteredEmpleados.length === 0 && searchQuery ? (
-                      <div className="text-center py-12">
-                        <div className="text-gray-400 text-lg mb-4">
+                      <div className="text-center py-8 sm:py-12">
+                        <div className="text-gray-400 text-base sm:text-lg mb-4">
                           No se encontraron empleados que coincidan con "{searchQuery}"
                         </div>
                         <button 
                           onClick={() => setSearchQuery('')}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                          className="touch-target bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors"
                         >
                           Limpiar búsqueda
                         </button>
@@ -451,14 +451,81 @@ const SkillMatrix = () => {
                     ) : (
                       filteredEmpleados.map((empleado) => (
                       <div key={empleado.id}>
-                        {/* Fila principal del empleado */}
+                        {/* Fila principal del empleado - VERSIÓN MÓVIL */}
                         <div 
-                          className="bg-gray-700 border border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer hover:bg-gray-650"
-                          onDoubleClick={() => setExpandedEmployee(
+                          className="bg-gray-700 border border-gray-600 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow cursor-pointer hover:bg-gray-650"
+                          onClick={() => setExpandedEmployee(
                             expandedEmployee === empleado.id ? null : empleado.id
                           )}
                         >
-                          <div className={`grid gap-4 items-center ${editMode ? 'grid-cols-8' : 'grid-cols-7'}`}>
+                          {/* Layout móvil */}
+                          <div className="block sm:hidden">
+                            <div className="flex items-start gap-3 mb-3">
+                              {/* Foto */}
+                              <div className="flex-shrink-0">
+                                {empleado.link ? (
+                                  <img 
+                                    src={empleado.link} 
+                                    alt={empleado.nombre}
+                                    className="w-14 h-14 rounded-full object-cover border-2 border-gray-500"
+                                    onError={(e) => {
+                                      e.target.style.display = 'none';
+                                      e.target.nextSibling.style.display = 'flex';
+                                    }}
+                                  />
+                                ) : null}
+                                <div 
+                                  className="w-14 h-14 bg-gray-600 rounded-full flex items-center justify-center text-gray-400 text-xs border-2 border-gray-500"
+                                  style={empleado.link ? {display: 'none'} : {}}
+                                >
+                                  👤
+                                </div>
+                              </div>
+                              
+                              {/* Info principal */}
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium text-gray-100 text-sm truncate">{empleado.nombre}</div>
+                                <div className="text-xs text-gray-400 mt-0.5">No. {empleado.nde}</div>
+                                <div className="text-xs text-gray-300 mt-1">{empleado.pos}</div>
+                                <div className="text-xs text-gray-400 mt-0.5">{empleado.line}</div>
+                              </div>
+                              
+                              {/* Certificaciones badge */}
+                              <div className="flex-shrink-0">
+                                <div className={`px-2 py-1 rounded-full border text-xs font-medium ${getCounterColor(getCertificacionesAvanzadas(empleado))}`}>
+                                  {getCertificacionesAvanzadas(empleado)}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Botones de edición en móvil */}
+                            {editMode && (
+                              <div className="flex gap-2 pt-2 border-t border-gray-600">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingEmpleado(empleado.id);
+                                    setShowForm(true);
+                                  }}
+                                  className="touch-target flex-1 bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white py-2 rounded text-xs font-medium"
+                                >
+                                  ✏️ Editar
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    showDeleteConfirmation(empleado);
+                                  }}
+                                  className="touch-target flex-1 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white py-2 rounded text-xs font-medium"
+                                >
+                                  🗑️ Eliminar
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Layout desktop (mantiene original) */}
+                          <div className={`hidden sm:grid gap-4 items-center ${editMode ? 'grid-cols-8' : 'grid-cols-7'}`}>
                             {/* Foto del empleado */}
                             <div className="flex justify-center">
                               {empleado.link ? (
@@ -509,7 +576,8 @@ const SkillMatrix = () => {
                             {editMode && (
                               <div className="flex gap-2 justify-center">
                                 <button
-                                  onClick={() => {
+                                  onClick={(e) => {
+                                    e.stopPropagation();
                                     setEditingEmpleado(empleado.id);
                                     setShowForm(true);
                                   }}
@@ -519,7 +587,10 @@ const SkillMatrix = () => {
                                   ✏️
                                 </button>
                                 <button
-                                  onClick={() => showDeleteConfirmation(empleado)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    showDeleteConfirmation(empleado);
+                                  }}
                                   className="bg-red-600 hover:bg-red-700 text-white p-2 rounded text-xs"
                                   title="Eliminar empleado"
                                 >
@@ -530,39 +601,42 @@ const SkillMatrix = () => {
                           </div>
                           
                           <div className="mt-2 text-xs text-gray-400 text-center">
-                            💡 Doble clic para ver todas las certificaciones
+                            💡 Toca para ver todas las certificaciones
                           </div>
                         </div>
 
                         {/* Tarjeta expandida con todas las certificaciones */}
                         {expandedEmployee === empleado.id && (
-                          <div className="mt-4 bg-gray-900 border border-gray-600 rounded-lg p-6">
-                            <div className="flex justify-between items-center mb-4">
-                              <h3 className="text-lg font-semibold text-blue-400">
+                          <div className="mt-3 sm:mt-4 bg-gray-900 border border-gray-600 rounded-lg p-3 sm:p-4 md:p-6">
+                            <div className="flex justify-between items-center mb-3 sm:mb-4">
+                              <h3 className="text-sm sm:text-base md:text-lg font-semibold text-blue-400">
                                 Certificaciones de {empleado.nombre}
                               </h3>
                               <button 
-                                onClick={() => setExpandedEmployee(null)}
-                                className="text-blue-400 hover:text-blue-300 text-xl font-bold"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedEmployee(null);
+                                }}
+                                className="touch-target text-blue-400 hover:text-blue-300 text-xl sm:text-2xl font-bold"
                               >
                                 ×
                               </button>
                             </div>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                               {operaciones.map((op) => (
                                 <div 
                                   key={op.id} 
                                   className="bg-gray-800 rounded-lg p-3 border border-gray-600 shadow-sm"
                                 >
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex-1">
-                                      <h4 className="text-sm font-medium text-gray-100 mb-2 leading-tight">
-                                        {op.nombre.replace(/\\n/g, '\n')}
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-xs sm:text-sm font-medium text-gray-100 mb-2 leading-tight">
+                                        {op.nombre.replace(/\\n/g, ' ')}
                                       </h4>
                                     </div>
-                                    <div className="ml-3">
-                                      <PieChart value={empleado[op.id]} size={40} />
+                                    <div className="flex-shrink-0">
+                                      <PieChart value={empleado[op.id]} size={36} />
                                     </div>
                                   </div>
                                   <div className="mt-2 text-center">
@@ -596,17 +670,17 @@ const SkillMatrix = () => {
 
       {/* Modal de autenticación para modo edición */}
       {showAuthModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-96 border border-gray-700">
-            <h2 className="text-xl font-semibold mb-4 text-gray-100">Acceso a Modo Edición</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-sm sm:max-w-md border border-gray-700">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-100">Acceso a Modo Edición</h2>
             <form onSubmit={handleEditAuth}>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <input
                   type="text"
                   placeholder="Usuario"
                   value={authUsername}
                   onChange={(e) => setAuthUsername(e.target.value)}
-                  className="w-full border border-gray-600 rounded-lg px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                  className="w-full border border-gray-600 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                   required
                 />
                 <input
@@ -614,14 +688,14 @@ const SkillMatrix = () => {
                   placeholder="Contraseña"
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
-                  className="w-full border border-gray-600 rounded-lg px-3 py-2 bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                  className="w-full border border-gray-600 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                   required
                 />
-                {authError && <div className="text-red-400 text-sm">{authError}</div>}
+                {authError && <div className="text-red-400 text-xs sm:text-sm">{authError}</div>}
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors"
+                    className="touch-target flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-2 rounded-lg text-sm sm:text-base transition-colors"
                   >
                     Entrar
                   </button>
@@ -633,7 +707,7 @@ const SkillMatrix = () => {
                       setAuthPassword('');
                       setAuthError('');
                     }}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors"
+                    className="touch-target flex-1 bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white py-2 rounded-lg text-sm sm:text-base transition-colors"
                   >
                     Cancelar
                   </button>
@@ -646,26 +720,26 @@ const SkillMatrix = () => {
 
       {/* Modal de confirmación de eliminación */}
       {showDeleteModal && empleadoToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-96 border border-gray-700">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-sm sm:max-w-md border border-gray-700">
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-red-900 rounded-full flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-900 rounded-full flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
-              <h2 className="text-xl font-semibold text-gray-100">Confirmar Eliminación</h2>
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-100">Confirmar Eliminación</h2>
             </div>
             
-            <div className="mb-6">
-              <p className="text-gray-300 mb-2">¿Estás seguro de que quieres eliminar al empleado?</p>
+            <div className="mb-4 sm:mb-6">
+              <p className="text-gray-300 mb-2 text-sm sm:text-base">¿Estás seguro de que quieres eliminar al empleado?</p>
               <div className="bg-gray-900 border border-gray-600 rounded-lg p-3">
                 <div className="flex items-center space-x-3">
                   {empleadoToDelete.link ? (
                     <img 
                       src={empleadoToDelete.link} 
                       alt={empleadoToDelete.nombre}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-gray-500"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-gray-500 flex-shrink-0"
                       onError={(e) => {
                         e.target.style.display = 'none';
                         e.target.nextSibling.style.display = 'flex';
@@ -673,30 +747,30 @@ const SkillMatrix = () => {
                     />
                   ) : null}
                   <div 
-                    className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-gray-400 text-xs border-2 border-gray-500"
+                    className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-gray-400 text-xs border-2 border-gray-500 flex-shrink-0"
                     style={empleadoToDelete.link ? {display: 'none'} : {}}
                   >
                     👤
                   </div>
-                  <div>
-                    <div className="font-medium text-gray-100">{empleadoToDelete.nombre}</div>
-                    <div className="text-sm text-gray-400">No. {empleadoToDelete.nde} • {empleadoToDelete.pos}</div>
+                  <div className="min-w-0">
+                    <div className="font-medium text-gray-100 text-sm sm:text-base truncate">{empleadoToDelete.nombre}</div>
+                    <div className="text-xs sm:text-sm text-gray-400">No. {empleadoToDelete.nde} • {empleadoToDelete.pos}</div>
                   </div>
                 </div>
               </div>
-              <p className="text-red-400 text-sm mt-3">⚠️ Esta acción no se puede deshacer</p>
+              <p className="text-red-400 text-xs sm:text-sm mt-3">⚠️ Esta acción no se puede deshacer</p>
             </div>
             
             <div className="flex gap-3">
               <button
                 onClick={cancelDelete}
-                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors"
+                className="touch-target flex-1 bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white py-2 rounded-lg text-sm sm:text-base transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={deleteEmpleado}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition-colors"
+                className="touch-target flex-1 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white py-2 rounded-lg text-sm sm:text-base transition-colors"
               >
                 Eliminar
               </button>

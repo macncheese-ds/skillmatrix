@@ -138,65 +138,65 @@ const EmpleadoForm = ({ empleadoId, onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6">
-          <h2 className="text-xl font-bold">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl my-4 max-h-[95vh] overflow-y-auto">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 sm:p-6 sticky top-0 z-10">
+          <h2 className="text-lg sm:text-xl font-bold">
             {empleadoId ? 'Editar Empleado' : 'Nuevo Empleado'}
           </h2>
         </div>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mx-6 mt-4 rounded">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 mx-3 sm:mx-6 mt-3 sm:mt-4 rounded text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6">
           {/* Datos básicos */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Número de Empleado Completo *
               </label>
               <input
                 type="number"
                 value={empleado.nde}
                 onChange={(e) => handleChange('nde', parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ej: 12345"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Nombre Completo *
               </label>
               <input
                 type="text"
                 value={empleado.nombre}
                 onChange={(e) => handleChange('nombre', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Fecha de Ingreso *
               </label>
               <input
                 type="date"
                 value={empleado.fi}
                 onChange={(e) => handleChange('fi', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Foto
               </label>
               <ImageUploader
@@ -206,13 +206,13 @@ const EmpleadoForm = ({ empleadoId, onClose, onSave }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Posición *
               </label>
               <select
                 value={empleado.pos}
                 onChange={(e) => handleChange('pos', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="">Seleccionar posición...</option>
@@ -223,25 +223,25 @@ const EmpleadoForm = ({ empleadoId, onClose, onSave }) => {
               </select>
             </div>
 
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="sm:col-span-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Líneas de Trabajo *
               </label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 {lineasDisponibles.map((linea) => (
-                  <label key={linea} className="flex items-center space-x-2 cursor-pointer">
+                  <label key={linea} className="flex items-center space-x-2 cursor-pointer touch-target">
                     <input
                       type="checkbox"
                       checked={selectedLines.includes(linea)}
                       onChange={() => handleLineToggle(linea)}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2"
                     />
-                    <span className="text-sm text-gray-700">{linea}</span>
+                    <span className="text-xs sm:text-sm text-gray-700">{linea}</span>
                   </label>
                 ))}
               </div>
               {selectedLines.length > 0 && (
-                <div className="mt-2 text-sm text-gray-600">
+                <div className="mt-2 text-xs sm:text-sm text-gray-600">
                   <strong>Seleccionadas:</strong> {selectedLines.join(', ')}
                 </div>
               )}
@@ -249,18 +249,18 @@ const EmpleadoForm = ({ empleadoId, onClose, onSave }) => {
           </div>
 
           {/* Matriz de habilidades */}
-          <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Certificaciones de Operaciones</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Certificaciones de Operaciones</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {operaciones.map((op) => (
-                <div key={op.id} className="border border-gray-200 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div key={op.id} className="border border-gray-200 rounded-lg p-3">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 leading-tight">
                     {op.nombre}
                   </label>
                   <select
                     value={empleado[op.id]}
                     onChange={(e) => handleChange(op.id, parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-2 sm:px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value={0}>0 - Sin certificación</option>
                     <option value={1}>1 - Básico</option>
@@ -277,18 +277,18 @@ const EmpleadoForm = ({ empleadoId, onClose, onSave }) => {
           </div>
 
           {/* Botones */}
-          <div className="flex justify-end space-x-4">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-4 sticky bottom-0 bg-white pt-3 pb-2 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+              className="touch-target w-full sm:w-auto px-4 py-2 text-sm sm:text-base text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 active:bg-gray-400 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="touch-target w-full sm:w-auto px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-md hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Guardando...' : 'Guardar'}
             </button>
