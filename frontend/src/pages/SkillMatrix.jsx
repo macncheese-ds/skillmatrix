@@ -12,12 +12,17 @@ const SkillMatrix = () => {
   const [expandedEmployee, setExpandedEmployee] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authUsername, setAuthUsername] = useState('');
-  const [authPassword, setAuthPassword] = useState('');
+  const [numEmpleado, setNumEmpleado] = useState('');
+  const [password, setPassword] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
   const [authError, setAuthError] = useState('');
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [empleadoToDelete, setEmpleadoToDelete] = useState(null);
+  const [showSkillsModal, setShowSkillsModal] = useState(false);
+  const [selectedEmpleado, setSelectedEmpleado] = useState(null);
 
   // Nombres de las operaciones según la imagen
   const operaciones = [
@@ -166,28 +171,53 @@ const SkillMatrix = () => {
            String(empleado.line || '').toLowerCase().includes(query);
   });
 
-  // Función para manejar la autenticación para modo edición
-  const handleEditAuth = async (e) => {
-    e.preventDefault();
+  // Lookup de usuario por num_empleado
+  const handleLookup = async () => {
+    if (!numEmpleado.trim()) return;
+    
+    setLookupLoading(true);
     setAuthError('');
+    setUserInfo(null);
     
     try {
+      const data = await api.get(`/auth/lookup/${numEmpleado.trim().toUpperCase()}`);
+      setUserInfo(data);
+    } catch (e) {
+      const message = e.response?.data?.message || 'Usuario no encontrado';
+      setAuthError(message);
+      setUserInfo(null);
+    } finally {
+      setLookupLoading(false);
+    }
+  };
+
+  // Autenticación para modo edición
+  const handleEditAuth = async (e) => {
+    e.preventDefault();
+    if (!userInfo || !password) return;
+
+    setLoginLoading(true);
+    setAuthError('');
+
+    try {
       const data = await api.post('/auth/login', { 
-        username: authUsername, 
-        password: authPassword 
+        username: userInfo.num_empleado, 
+        password 
       });
       
       if (data.token) {
-        // guardar token para que axios lo incluya en próximas peticiones
         setAuthToken(data.token);
         setEditMode(true);
         setShowAuthModal(false);
-        setAuthUsername('');
-        setAuthPassword('');
-        setCurrentView('detalle'); // Cambiar a vista de empleados automáticamente
+        setNumEmpleado('');
+        setPassword('');
+        setUserInfo(null);
+        setCurrentView('detalle');
       }
     } catch (error) {
-      setAuthError('Usuario o contraseña incorrectos');
+      setAuthError('Contraseña incorrecta');
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -196,8 +226,24 @@ const SkillMatrix = () => {
     setEditMode(false);
     setShowForm(false);
     setEditingEmpleado(null);
-    // remover token cuando se sale del modo edición
     setAuthToken(null);
+  };
+
+  // Reset del modal
+  const resetAuthModal = () => {
+    setShowAuthModal(false);
+    setNumEmpleado('');
+    setPassword('');
+    setUserInfo(null);
+    setAuthError('');
+  };
+
+  // Manejar Enter en el campo de número de empleado
+  const handleNumEmpleadoKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleLookup();
+    }
   };
 
   const PieChart = ({ value, size = 32 }) => {
@@ -279,7 +325,7 @@ const SkillMatrix = () => {
                   onClick={() => setShowAuthModal(true)}
                   className="touch-target bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors flex-1 sm:flex-none"
                 >
-                  ✏️ Editar
+                  Editar
                 </button>
               ) : (
                 <>
@@ -287,7 +333,7 @@ const SkillMatrix = () => {
                     onClick={exitEditMode}
                     className="touch-target bg-red-600 hover:bg-red-700 active:bg-red-800 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex-1"
                   >
-                    ❌ Salir
+                    Salir
                   </button>
                   <button 
                     onClick={() => setShowForm(true)}
@@ -310,7 +356,7 @@ const SkillMatrix = () => {
                   : 'bg-blue-800 hover:bg-blue-700 active:bg-blue-600 text-white border border-blue-600'
               }`}
             >
-              📊 <span className="hidden xs:inline">Resumen</span>
+              Resumen
             </button>
             <button 
               onClick={() => setCurrentView('detalle')}
@@ -320,16 +366,16 @@ const SkillMatrix = () => {
                   : 'bg-blue-800 hover:bg-blue-700 active:bg-blue-600 text-white border border-blue-600'
               }`}
             >
-              👥 <span className="hidden xs:inline">Empleados</span>
+              Empleados
             </button>
           </div>
         </div>
 
         {/* Contenido según la vista actual */}
         {currentView === 'resumen' ? (
-          /* VISTA RESUMEN */
+          /* VISTA RESUMEN - Tabla compacta */
           <div className="p-3 sm:p-4 md:p-6 bg-gray-800">
-            <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-4 sm:mb-6 text-gray-100">Resumen de Procesos SMT</h2>
+            <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-4 text-gray-100">Resumen de Procesos SMT</h2>
             
             {(!empleados || empleados.length === 0) ? (
               <div className="text-center py-8 sm:py-12">
@@ -346,34 +392,95 @@ const SkillMatrix = () => {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
-                {getProcessSummary().map((proceso) => {
-                  const colors = getCardColors(proceso.totalCertificados);
-                  return (
-                    <div key={proceso.id} className={`${colors.cardClass} rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-shadow`}>
-                      <h3 className={`font-medium text-xs leading-tight ${colors.textColor} mb-2 line-clamp-3`}>
-                        {proceso.nombre.replace(/\n/g, ' ')}
-                      </h3>
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between items-center">
-                          <span className={`${colors.textColor} text-xs`}>Certificados:</span>
-                          <span className={`font-bold text-sm sm:text-base ${colors.numberColor}`}>
-                            {proceso.totalCertificados}/{proceso.totalEmpleados}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-600 rounded-full h-1.5">
-                          <div 
-                            className={`${colors.barColor} h-1.5 rounded-full transition-all duration-300`}
-                            style={{ width: `${proceso.porcentaje}%` }}
-                          ></div>
-                        </div>
-                        <div className={`text-center text-xs font-medium ${colors.textColor}`}>
-                          {proceso.porcentaje}% del equipo
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray-700">
+                      <th className="text-left p-2 sm:p-3 text-xs sm:text-sm font-semibold text-gray-200 border-b border-gray-600">
+                        Proceso
+                      </th>
+                      <th className="text-center p-2 sm:p-3 text-xs sm:text-sm font-semibold text-gray-200 border-b border-gray-600">
+                        Certificados
+                      </th>
+                      <th className="hidden sm:table-cell text-center p-2 sm:p-3 text-xs sm:text-sm font-semibold text-gray-200 border-b border-gray-600">
+                        Total
+                      </th>
+                      <th className="text-center p-2 sm:p-3 text-xs sm:text-sm font-semibold text-gray-200 border-b border-gray-600">
+                        %
+                      </th>
+                      <th className="hidden md:table-cell text-center p-2 sm:p-3 text-xs sm:text-sm font-semibold text-gray-200 border-b border-gray-600 min-w-[200px]">
+                        Cobertura
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {getProcessSummary().map((proceso, idx) => {
+                      const colors = proceso.totalCertificados <= 2 
+                        ? 'bg-red-900/30 border-red-700/50' 
+                        : proceso.totalCertificados <= 5 
+                        ? 'bg-yellow-900/30 border-yellow-700/50' 
+                        : 'bg-green-900/30 border-green-700/50';
+                      
+                      return (
+                        <tr key={proceso.id} className={`${colors} ${idx % 2 === 0 ? 'bg-opacity-50' : ''} hover:bg-gray-650 transition-colors`}>
+                          <td className="p-2 sm:p-3 text-xs sm:text-sm text-gray-200 border-b border-gray-700">
+                            {proceso.nombre.replace(/\n/g, ' ')}
+                          </td>
+                          <td className="p-2 sm:p-3 text-center border-b border-gray-700">
+                            <span className={`inline-block px-2 py-1 rounded text-xs sm:text-sm font-bold ${
+                              proceso.totalCertificados <= 2 
+                                ? 'bg-red-600 text-red-100' 
+                                : proceso.totalCertificados <= 5 
+                                ? 'bg-yellow-600 text-yellow-100' 
+                                : 'bg-green-600 text-green-100'
+                            }`}>
+                              {proceso.totalCertificados}
+                            </span>
+                          </td>
+                          <td className="hidden sm:table-cell p-2 sm:p-3 text-center text-xs sm:text-sm text-gray-300 border-b border-gray-700">
+                            {proceso.totalEmpleados}
+                          </td>
+                          <td className="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold text-gray-200 border-b border-gray-700">
+                            {proceso.porcentaje}%
+                          </td>
+                          <td className="hidden md:table-cell p-2 sm:p-3 border-b border-gray-700">
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 bg-gray-600 rounded-full h-2">
+                                <div 
+                                  className={`h-2 rounded-full transition-all duration-300 ${
+                                    proceso.porcentaje <= 30 ? 'bg-red-500' :
+                                    proceso.porcentaje <= 60 ? 'bg-yellow-500' :
+                                    'bg-green-500'
+                                  }`}
+                                  style={{ width: `${proceso.porcentaje}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-xs text-gray-400 w-12 text-right">
+                                {proceso.totalCertificados}/{proceso.totalEmpleados}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                
+                {/* Leyenda */}
+                <div className="mt-4 flex flex-wrap gap-4 text-xs sm:text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-red-600"></div>
+                    <span className="text-gray-400">Crítico (≤2)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-yellow-600"></div>
+                    <span className="text-gray-400">Moderado (3-5)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-green-600"></div>
+                    <span className="text-gray-400">Óptimo (&gt;5)</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -449,90 +556,23 @@ const SkillMatrix = () => {
                         </button>
                       </div>
                     ) : (
-                      filteredEmpleados.map((empleado) => (
-                      <div key={empleado.id}>
-                        {/* Fila principal del empleado - VERSIÓN MÓVIL */}
-                        <div 
-                          className="bg-gray-700 border border-gray-600 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow cursor-pointer hover:bg-gray-650"
-                          onClick={() => setExpandedEmployee(
-                            expandedEmployee === empleado.id ? null : empleado.id
-                          )}
-                        >
-                          {/* Layout móvil */}
-                          <div className="block sm:hidden">
-                            <div className="flex items-start gap-3 mb-3">
-                              {/* Foto */}
-                              <div className="flex-shrink-0">
-                                {empleado.link ? (
-                                  <img 
-                                    src={empleado.link} 
-                                    alt={empleado.nombre}
-                                    className="w-14 h-14 rounded-full object-cover border-2 border-gray-500"
-                                    onError={(e) => {
-                                      e.target.style.display = 'none';
-                                      e.target.nextSibling.style.display = 'flex';
-                                    }}
-                                  />
-                                ) : null}
-                                <div 
-                                  className="w-14 h-14 bg-gray-600 rounded-full flex items-center justify-center text-gray-400 text-xs border-2 border-gray-500"
-                                  style={empleado.link ? {display: 'none'} : {}}
-                                >
-                                  👤
-                                </div>
-                              </div>
-                              
-                              {/* Info principal */}
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium text-gray-100 text-sm truncate">{empleado.nombre}</div>
-                                <div className="text-xs text-gray-400 mt-0.5">No. {empleado.nde}</div>
-                                <div className="text-xs text-gray-300 mt-1">{empleado.pos}</div>
-                                <div className="text-xs text-gray-400 mt-0.5">{empleado.line}</div>
-                              </div>
-                              
-                              {/* Certificaciones badge */}
-                              <div className="flex-shrink-0">
-                                <div className={`px-2 py-1 rounded-full border text-xs font-medium ${getCounterColor(getCertificacionesAvanzadas(empleado))}`}>
-                                  {getCertificacionesAvanzadas(empleado)}
-                                </div>
-                              </div>
-                            </div>
-                            
-                            {/* Botones de edición en móvil */}
-                            {editMode && (
-                              <div className="flex gap-2 pt-2 border-t border-gray-600">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditingEmpleado(empleado.id);
-                                    setShowForm(true);
-                                  }}
-                                  className="touch-target flex-1 bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white py-2 rounded text-xs font-medium"
-                                >
-                                  ✏️ Editar
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    showDeleteConfirmation(empleado);
-                                  }}
-                                  className="touch-target flex-1 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white py-2 rounded text-xs font-medium"
-                                >
-                                  🗑️ Eliminar
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                          
-                          {/* Layout desktop (mantiene original) */}
-                          <div className={`hidden sm:grid gap-4 items-center ${editMode ? 'grid-cols-8' : 'grid-cols-7'}`}>
-                            {/* Foto del empleado */}
-                            <div className="flex justify-center">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                        {filteredEmpleados.map((empleado) => (
+                          <div 
+                            key={empleado.id}
+                            className="bg-gray-700 border border-gray-600 rounded-lg p-3 hover:shadow-lg transition-all cursor-pointer hover:border-blue-500"
+                            onClick={() => {
+                              setSelectedEmpleado(empleado);
+                              setShowSkillsModal(true);
+                            }}
+                          >
+                            {/* Foto */}
+                            <div className="flex justify-center mb-3">
                               {empleado.link ? (
                                 <img 
                                   src={empleado.link} 
                                   alt={empleado.nombre}
-                                  className="w-16 h-16 rounded-full object-cover border-2 border-gray-500"
+                                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-gray-500"
                                   onError={(e) => {
                                     e.target.style.display = 'none';
                                     e.target.nextSibling.style.display = 'flex';
@@ -540,123 +580,69 @@ const SkillMatrix = () => {
                                 />
                               ) : null}
                               <div 
-                                className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center text-gray-400 text-xs border-2 border-gray-500"
+                                className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-600 rounded-full flex items-center justify-center text-gray-400 text-3xl border-2 border-gray-500"
                                 style={empleado.link ? {display: 'none'} : {}}
                               >
-                                Sin foto
+                                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                </svg>
                               </div>
                             </div>
-                            <div className="font-medium text-gray-100">
-                              <div className="text-sm text-gray-400">No. Empleado</div>
-                              <div className="text-lg">{empleado.nde}</div>
-                            </div>
-                            <div>
-                              <div className="text-sm text-gray-400">Nombre</div>
-                              <div className="font-medium text-gray-100">{empleado.nombre}</div>
-                            </div>
-                            <div>
-                              <div className="text-sm text-gray-400">Posición</div>
-                              <div className="text-gray-200">{empleado.pos}</div>
-                            </div>
-                            <div>
-                              <div className="text-sm text-gray-400">Línea</div>
-                              <div className="text-gray-200">{empleado.line}</div>
-                            </div>
-                            <div>
-                              <div className="text-sm text-gray-400">Fecha Ingreso</div>
-                              <div className="text-gray-200">{new Date(empleado.fi).toLocaleDateString()}</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-sm text-gray-400">Certificaciones Avanzadas</div>
-                              <div className={`inline-block px-3 py-1 rounded-full border text-sm font-medium ${getCounterColor(getCertificacionesAvanzadas(empleado))}`}>
-                                {getCertificacionesAvanzadas(empleado)}
+                            
+                            {/* Info */}
+                            <div className="text-center space-y-1">
+                              <div className="font-semibold text-sm text-gray-100 truncate" title={empleado.nombre}>
+                                {empleado.nombre}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                No. {empleado.nde}
+                              </div>
+                              <div className="text-xs text-gray-300 truncate" title={empleado.pos}>
+                                {empleado.pos}
+                              </div>
+                              
+                              {/* Badge de certificaciones */}
+                              <div className="pt-2">
+                                <div className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${getCounterColor(getCertificacionesAvanzadas(empleado))}`}>
+                                  {getCertificacionesAvanzadas(empleado)} cert.
+                                </div>
                               </div>
                             </div>
-                            {/* Acciones de edición */}
+                            
+                            {/* Botones de edición */}
                             {editMode && (
-                              <div className="flex gap-2 justify-center">
+                              <div className="mt-3 pt-3 border-t border-gray-600 flex gap-2">
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setEditingEmpleado(empleado.id);
                                     setShowForm(true);
                                   }}
-                                  className="bg-yellow-600 hover:bg-yellow-700 text-white p-2 rounded text-xs"
-                                  title="Editar empleado"
+                                  className="touch-target flex-1 bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white py-1.5 rounded text-xs font-medium"
+                                  title="Editar"
                                 >
-                                  ✏️
+                                  Editar
                                 </button>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     showDeleteConfirmation(empleado);
                                   }}
-                                  className="bg-red-600 hover:bg-red-700 text-white p-2 rounded text-xs"
-                                  title="Eliminar empleado"
+                                  className="touch-target flex-1 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white py-1.5 rounded text-xs font-medium"
+                                  title="Eliminar"
                                 >
-                                  🗑️
+                                  Eliminar
                                 </button>
                               </div>
                             )}
-                          </div>
-                          
-                          <div className="mt-2 text-xs text-gray-400 text-center">
-                            💡 Toca para ver todas las certificaciones
-                          </div>
-                        </div>
-
-                        {/* Tarjeta expandida con todas las certificaciones */}
-                        {expandedEmployee === empleado.id && (
-                          <div className="mt-3 sm:mt-4 bg-gray-900 border border-gray-600 rounded-lg p-3 sm:p-4 md:p-6">
-                            <div className="flex justify-between items-center mb-3 sm:mb-4">
-                              <h3 className="text-sm sm:text-base md:text-lg font-semibold text-blue-400">
-                                Certificaciones de {empleado.nombre}
-                              </h3>
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setExpandedEmployee(null);
-                                }}
-                                className="touch-target text-blue-400 hover:text-blue-300 text-xl sm:text-2xl font-bold"
-                              >
-                                ×
-                              </button>
-                            </div>
                             
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                              {operaciones.map((op) => (
-                                <div 
-                                  key={op.id} 
-                                  className="bg-gray-800 rounded-lg p-3 border border-gray-600 shadow-sm"
-                                >
-                                  <div className="flex items-center justify-between gap-2">
-                                    <div className="flex-1 min-w-0">
-                                      <h4 className="text-xs sm:text-sm font-medium text-gray-100 mb-2 leading-tight">
-                                        {op.nombre.replace(/\\n/g, ' ')}
-                                      </h4>
-                                    </div>
-                                    <div className="flex-shrink-0">
-                                      <PieChart value={empleado[op.id]} size={36} />
-                                    </div>
-                                  </div>
-                                  <div className="mt-2 text-center">
-                                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                                      empleado[op.id] >= 4 ? 'bg-green-900 text-green-300 border border-green-700' :
-                                      empleado[op.id] >= 3 ? 'bg-blue-900 text-blue-300 border border-blue-700' :
-                                      empleado[op.id] >= 2 ? 'bg-yellow-900 text-yellow-300 border border-yellow-700' :
-                                      empleado[op.id] >= 1 ? 'bg-orange-900 text-orange-300 border border-orange-700' :
-                                      'bg-gray-700 text-gray-300 border border-gray-600'
-                                    }`}>
-                                      Nivel {empleado[op.id]}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
+                            {/* Indicador de clic */}
+                            <div className="mt-2 text-xs text-gray-400 text-center">
+                              Clic para detalles
                             </div>
                           </div>
-                        )}
+                        ))}
                       </div>
-                    ))
                     )}
                   </div>
                 </div>
@@ -668,51 +654,255 @@ const SkillMatrix = () => {
         )}
       </div>
 
+      {/* Modal de Skills Detallados */}
+      {showSkillsModal && selectedEmpleado && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg w-full max-w-6xl max-h-[90vh] overflow-hidden border-2 border-blue-500 shadow-2xl my-8">
+            {/* Header del Modal */}
+            <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-4 sm:p-6 z-10">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4 flex-1 min-w-0">
+                  {/* Foto */}
+                  <div className="flex-shrink-0">
+                    {selectedEmpleado.link ? (
+                      <img 
+                        src={selectedEmpleado.link} 
+                        alt={selectedEmpleado.nombre}
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-blue-500"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div 
+                      className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-600 rounded-full flex items-center justify-center text-gray-400 border-2 border-blue-500"
+                      style={selectedEmpleado.link ? {display: 'none'} : {}}
+                    >
+                      <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-xl sm:text-2xl font-bold text-blue-400 truncate">
+                      {selectedEmpleado.nombre}
+                    </h2>
+                    <div className="flex flex-wrap gap-2 sm:gap-4 mt-1 text-xs sm:text-sm text-gray-300">
+                      <span>No. {selectedEmpleado.nde}</span>
+                      <span>•</span>
+                      <span>{selectedEmpleado.pos}</span>
+                      <span>•</span>
+                      <span className="font-semibold text-blue-400">{getCertificacionesAvanzadas(selectedEmpleado)} Certificaciones</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Botón cerrar */}
+                <button 
+                  onClick={() => {
+                    setShowSkillsModal(false);
+                    setSelectedEmpleado(null);
+                  }}
+                  className="touch-target flex-shrink-0 text-gray-400 hover:text-gray-200 text-3xl font-bold w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-700 transition-colors"
+                  title="Cerrar"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {/* Estadísticas resumidas */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                <div className="bg-green-900/30 border border-green-700 rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-green-400">
+                    {operaciones.filter(op => selectedEmpleado[op.id] >= 4).length}
+                  </div>
+                  <div className="text-xs text-green-300 mt-1">Experto</div>
+                </div>
+                <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-blue-400">
+                    {operaciones.filter(op => selectedEmpleado[op.id] === 3).length}
+                  </div>
+                  <div className="text-xs text-blue-300 mt-1">Avanzado</div>
+                </div>
+                <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-yellow-400">
+                    {operaciones.filter(op => selectedEmpleado[op.id] === 2).length}
+                  </div>
+                  <div className="text-xs text-yellow-300 mt-1">Intermedio</div>
+                </div>
+                <div className="bg-orange-900/30 border border-orange-700 rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-orange-400">
+                    {operaciones.filter(op => selectedEmpleado[op.id] === 1).length}
+                  </div>
+                  <div className="text-xs text-orange-300 mt-1">Básico</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Contenido del Modal - Certificaciones */}
+            <div className="p-4 sm:p-6 overflow-y-auto" style={{maxHeight: 'calc(90vh - 280px)'}}>
+              <h3 className="text-lg font-semibold text-gray-200 mb-4">Certificaciones Detalladas</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                {operaciones.map((op) => {
+                  const nivel = selectedEmpleado[op.id];
+                  return (
+                    <div 
+                      key={op.id} 
+                      className={`rounded-lg p-4 border-2 transition-all ${
+                        nivel >= 4 ? 'bg-green-900/20 border-green-600 hover:bg-green-900/30' :
+                        nivel >= 3 ? 'bg-blue-900/20 border-blue-600 hover:bg-blue-900/30' :
+                        nivel >= 2 ? 'bg-yellow-900/20 border-yellow-600 hover:bg-yellow-900/30' :
+                        nivel >= 1 ? 'bg-orange-900/20 border-orange-600 hover:bg-orange-900/30' :
+                        'bg-gray-800 border-gray-600 hover:bg-gray-750'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium text-gray-100 leading-tight mb-1">
+                            {op.nombre.split('\n')[0]}
+                          </h4>
+                          <p className="text-xs text-gray-400">
+                            {op.nombre.split('\n')[1]}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <PieChart value={nivel} size={48} />
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                          nivel >= 4 ? 'bg-green-600 text-green-100' :
+                          nivel >= 3 ? 'bg-blue-600 text-blue-100' :
+                          nivel >= 2 ? 'bg-yellow-600 text-yellow-100' :
+                          nivel >= 1 ? 'bg-orange-600 text-orange-100' :
+                          'bg-gray-600 text-gray-300'
+                        }`}>
+                          {getNivelTexto(nivel)}
+                        </span>
+                        <span className="text-lg font-bold text-gray-200">
+                          {nivel}/4
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal de autenticación para modo edición */}
       {showAuthModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-sm sm:max-w-md border border-gray-700">
             <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-100">Acceso a Modo Edición</h2>
-            <form onSubmit={handleEditAuth}>
-              <div className="space-y-3 sm:space-y-4">
+            <form onSubmit={handleEditAuth} className="space-y-4">
+              {/* Número de Empleado */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Número de Empleado
+                </label>
                 <input
                   type="text"
-                  placeholder="Usuario"
-                  value={authUsername}
-                  onChange={(e) => setAuthUsername(e.target.value)}
-                  className="w-full border border-gray-600 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                  value={numEmpleado}
+                  onChange={(e) => setNumEmpleado(e.target.value.toUpperCase())}
+                  onBlur={handleLookup}
+                  onKeyPress={handleNumEmpleadoKeyPress}
+                  className="w-full border border-gray-600 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none font-mono uppercase"
+                  placeholder="Ej: 1234A"
+                  disabled={!!userInfo || lookupLoading}
+                  autoFocus
                   required
                 />
-                <input
-                  type="password"
-                  placeholder="Contraseña"
-                  value={authPassword}
-                  onChange={(e) => setAuthPassword(e.target.value)}
-                  className="w-full border border-gray-600 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                  required
-                />
-                {authError && <div className="text-red-400 text-xs sm:text-sm">{authError}</div>}
-                <div className="flex gap-3">
+                {lookupLoading && (
+                  <p className="mt-2 text-xs text-blue-400">
+                    Buscando usuario...
+                  </p>
+                )}
+              </div>
+
+              {/* Info del usuario detectado */}
+              {userInfo && (
+                <div className="bg-gray-700 rounded-lg p-4 border border-gray-600 animate-fadeIn">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="text-sm text-gray-400 mb-1">Usuario detectado</div>
+                      <div className="font-semibold text-gray-100 text-lg">{userInfo.nombre}</div>
+                      <div className="text-xs text-gray-400 mt-1">No. {userInfo.num_empleado}</div>
+                      <div className="text-xs text-blue-400 mt-1">Rol: {userInfo.rol}</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNumEmpleado('');
+                        setUserInfo(null);
+                        setPassword('');
+                      }}
+                      className="text-gray-400 hover:text-gray-200 text-sm underline"
+                    >
+                      Cambiar
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Input de contraseña (solo visible si hay usuario) */}
+              {userInfo && (
+                <div className="animate-fadeIn">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full border border-gray-600 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    placeholder="Ingresa tu contraseña"
+                    disabled={loginLoading}
+                    autoFocus
+                    required
+                  />
+                </div>
+              )}
+
+              {/* Mensajes de error */}
+              {authError && (
+                <div className="text-red-400 text-xs sm:text-sm bg-red-900/30 border border-red-700 rounded px-3 py-2">
+                  {authError}
+                </div>
+              )}
+
+              {/* Botones */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={resetAuthModal}
+                  className="touch-target flex-1 bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white py-2 rounded-lg text-sm sm:text-base transition-colors"
+                >
+                  Cancelar
+                </button>
+                {userInfo && (
                   <button
                     type="submit"
-                    className="touch-target flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-2 rounded-lg text-sm sm:text-base transition-colors"
+                    className="touch-target flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-2 rounded-lg text-sm sm:text-base transition-colors disabled:opacity-50"
+                    disabled={loginLoading || !password}
                   >
-                    Entrar
+                    {loginLoading ? 'Ingresando...' : 'Entrar'}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowAuthModal(false);
-                      setAuthUsername('');
-                      setAuthPassword('');
-                      setAuthError('');
-                    }}
-                    className="touch-target flex-1 bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white py-2 rounded-lg text-sm sm:text-base transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                </div>
+                )}
               </div>
+
+              {/* Ayuda */}
+              {!userInfo && (
+                <p className="text-xs text-gray-400 text-center">
+                  Ingresa tu número de empleado y presiona Enter
+                </p>
+              )}
             </form>
           </div>
         </div>
@@ -750,15 +940,17 @@ const SkillMatrix = () => {
                     className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-gray-400 text-xs border-2 border-gray-500 flex-shrink-0"
                     style={empleadoToDelete.link ? {display: 'none'} : {}}
                   >
-                    👤
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
                   </div>
                   <div className="min-w-0">
                     <div className="font-medium text-gray-100 text-sm sm:text-base truncate">{empleadoToDelete.nombre}</div>
-                    <div className="text-xs sm:text-sm text-gray-400">No. {empleadoToDelete.nde} • {empleadoToDelete.pos}</div>
+                    <div className="text-xs sm:text-sm text-gray-400">No. {empleadoToDelete.nde} - {empleadoToDelete.pos}</div>
                   </div>
                 </div>
               </div>
-              <p className="text-red-400 text-xs sm:text-sm mt-3">⚠️ Esta acción no se puede deshacer</p>
+              <p className="text-red-400 text-xs sm:text-sm mt-3">ADVERTENCIA: Esta acción no se puede deshacer</p>
             </div>
             
             <div className="flex gap-3">
