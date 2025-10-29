@@ -11,6 +11,7 @@ import pool from './db.js';
 import authRoutes from './routes/auth.js';
 import empleadoRoutes from './routes/empleados.js';
 import uploadRoutes from './routes/upload.js';
+import procesosRoutes from './routes/procesos.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,7 +41,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
+app.use(express.json({ charset: 'utf-8' }));
+app.use(express.urlencoded({ extended: true, charset: 'utf-8' }));
 app.use(morgan('dev'));
 
 // Servir archivos estáticos (imágenes) con headers CORS
@@ -105,6 +107,7 @@ app.get('/api/test-db', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/empleados', empleadoRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/procesos', procesosRoutes);
 
 // Crea admin por única vez: username=admin, pass=admin123
 app.post('/api/dev/seed-admin', async (req, res) => {

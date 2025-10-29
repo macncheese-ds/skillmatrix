@@ -9,7 +9,8 @@ const credentialsPool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.CRED_DB_NAME || 'credenciales',
   connectionLimit: 10,
-  namedPlaceholders: true
+  namedPlaceholders: true,
+  charset: 'utf8mb4'
 });
 
 export default credentialsPool;

@@ -7,6 +7,16 @@ dotenv.config();
 
 const router = Router();
 
+// Función para normalizar número de empleado
+// Extrae solo los dígitos para comparación flexible
+// Ejemplo: "179A", "0179", "179", "0179A" todos se normalizan a "179"
+const normalizeNumEmpleado = (numEmpleado) => {
+  if (!numEmpleado) return '';
+  // Extraer solo los números, eliminar ceros a la izquierda
+  const numeros = numEmpleado.toString().replace(/\D/g, ''); // elimina todo excepto dígitos
+  return numeros.replace(/^0+/, ''); // elimina ceros a la izquierda
+};
+
 // Mapeo de roles de credenciales a roles de skillmatrix
 const mapRole = (credRole) => {
   const upperRole = (credRole || '').toUpperCase();
@@ -25,15 +35,19 @@ router.post(
     const { username, password } = req.body;
 
     try {
-      // Buscar usuario en credenciales por num_empleado
+      // Normalizar el número de empleado recibido
+      const normalizedInput = normalizeNumEmpleado(username);
+      
+      // Buscar todos los usuarios y comparar por número normalizado
       const [rows] = await credentialsPool.query(
-        'SELECT num_empleado, nombre, pass_hash, rol FROM users WHERE num_empleado = :u',
-        { u: username }
+        'SELECT num_empleado, nombre, pass_hash, rol FROM users'
       );
       
-      if (!rows.length) return res.status(401).json({ message: 'Credenciales inválidas' });
+      // Buscar coincidencia por número normalizado
+      const user = rows.find(u => normalizeNumEmpleado(u.num_empleado) === normalizedInput);
+      
+      if (!user) return res.status(401).json({ message: 'Credenciales inválidas' });
 
-      const user = rows[0];
       const bcrypt = (await import('bcryptjs')).default;
       const hash = Buffer.isBuffer(user.pass_hash) ? user.pass_hash.toString() : user.pass_hash;
       const ok = await bcrypt.compare(password, hash);
@@ -68,16 +82,22 @@ router.post(
 router.get('/lookup/:numEmpleado', async (req, res) => {
   try {
     const { numEmpleado } = req.params;
+    
+    // Normalizar el número de empleado recibido
+    const normalizedInput = normalizeNumEmpleado(numEmpleado);
+    
+    // Buscar todos los usuarios y comparar por número normalizado
     const [rows] = await credentialsPool.query(
-      'SELECT num_empleado, nombre, rol FROM users WHERE num_empleado = :ne',
-      { ne: numEmpleado }
+      'SELECT num_empleado, nombre, rol FROM users'
     );
     
-    if (!rows.length) {
+    // Buscar coincidencia por número normalizado
+    const user = rows.find(u => normalizeNumEmpleado(u.num_empleado) === normalizedInput);
+    
+    if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
     
-    const user = rows[0];
     res.json({
       num_empleado: user.num_empleado,
       nombre: user.nombre,

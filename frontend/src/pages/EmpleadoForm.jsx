@@ -29,7 +29,7 @@ const EmpleadoForm = ({ empleadoId, onClose, onSave }) => {
     'Offline SMT'
   ];
 
-  const operaciones = [
+  const [operaciones, setOperaciones] = useState([
     { id: 'op', nombre: 'Process 10/110 - Bottom/Top PCB Loading' },
     { id: 'op1', nombre: 'Process 20/120 - Bottom/Top Laser Marking' },
     { id: 'op2', nombre: 'Process 30/130 - Bottom/Top Solder Paste Printing' },
@@ -49,13 +49,26 @@ const EmpleadoForm = ({ empleadoId, onClose, onSave }) => {
     { id: 'op16', nombre: 'Process - Lavadora de Stenciles' },
     { id: 'op17', nombre: 'Process - Lavadora de Squeegees' },
     { id: 'op18', nombre: 'Process - MSL' }
-  ];
+  ]);
 
   useEffect(() => {
+    fetchProcesos();
     if (empleadoId) {
       fetchEmpleado();
     }
   }, [empleadoId]);
+
+  const fetchProcesos = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/procesos');
+      if (response.data && response.data.length > 0) {
+        setOperaciones(response.data);
+      }
+    } catch (error) {
+      console.warn('No se pudieron cargar procesos desde API, usando valores por defecto');
+      // Ya tiene el fallback en el estado inicial
+    }
+  };
 
   useEffect(() => {
     // Actualizar el campo line cuando cambian las líneas seleccionadas
