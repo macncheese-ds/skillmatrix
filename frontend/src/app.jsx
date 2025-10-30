@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { api } from './api.js';
+import { api, clearAuthToken, getValidToken } from './api.js';
+import { useSessionTimeout } from './hooks/useSessionTimeout.js';
+import SessionTimer from './components/SessionTimer.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import SkillMatrix from './pages/SkillMatrixSimple.jsx';
 import Empleados from './pages/Empleados.jsx';
@@ -10,6 +12,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,7 +20,7 @@ export default function App() {
   }, []);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem('token');
+    const token = getValidToken();
     if (!token) {
       navigate('/login');
       setLoading(false);
@@ -34,18 +37,29 @@ export default function App() {
       });
     } catch (error) {
       console.error('Error al verificar token:', error);
-      localStorage.removeItem('token');
+      clearAuthToken();
       navigate('/login');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleLogout = useCallback(() => {
+    clearAuthToken();
     setUser(null);
     navigate('/login');
-  };
+  }, [navigate]);
+
+  // Callback para cuando expira la sesión (5 minutos de inactividad)
+  const handleSessionTimeout = useCallback(() => {
+    setShowTimeoutWarning(true);
+    setTimeout(() => {
+      handleLogout();
+    }, 2000); // Mostrar mensaje por 2 segundos antes de cerrar
+  }, [handleLogout]);
+
+  // Usar el hook de timeout de sesión (5 minutos = 300000 ms)
+  useSessionTimeout(handleSessionTimeout, 5 * 60 * 1000);
 
   if (loading) {
     return (
@@ -61,6 +75,31 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-900">
+      {/* Advertencia de sesión expirada */}
+      {showTimeoutWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-gradient-to-br from-red-900 to-red-800 border-2 border-red-500 rounded-xl p-8 max-w-md mx-4 shadow-2xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="bg-red-500 rounded-full p-3">
+                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-white">Sesión Expirada</h3>
+                <p className="text-red-200 mt-1">Por inactividad de 5 minutos</p>
+              </div>
+            </div>
+            <p className="text-gray-100 mb-4">
+              Tu sesión ha expirado por seguridad. Serás redirigido al login...
+            </p>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header/Navbar */}
       <nav className="bg-gradient-to-r from-blue-800 to-blue-900 border-b border-blue-700 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,6 +113,9 @@ export default function App() {
 
             {/* Info Usuario */}
             <div className="flex items-center gap-4">
+              {/* Temporizador de sesión */}
+              <SessionTimer />
+              
               <div className="hidden sm:block text-right">
                 <div className="text-white font-medium text-sm flex items-center justify-end gap-2">
                   {user.nombre}

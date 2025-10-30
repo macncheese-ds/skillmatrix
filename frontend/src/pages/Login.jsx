@@ -44,7 +44,6 @@ export default function Login() {
         password 
       });
       
-      localStorage.setItem('token', data.token);
       setAuthToken(data.token);
       window.location.href = '/';
     } catch (e) {

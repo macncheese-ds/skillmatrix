@@ -13,13 +13,44 @@ api.interceptors.response.use(
 export function setAuthToken(token) {
   if (token) {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    localStorage.setItem('token', token);
+    // Usar sessionStorage en lugar de localStorage para que se limpie al cerrar/recargar
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('tokenTime', Date.now().toString());
   } else {
     delete api.defaults.headers.common['Authorization'];
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('tokenTime');
   }
 }
 
-// aplicar token guardado al cargar
-const saved = localStorage.getItem('token');
-if (saved) setAuthToken(saved);
+export function clearAuthToken() {
+  setAuthToken(null);
+}
+
+// Función para verificar si el token es válido
+export function getValidToken() {
+  const token = sessionStorage.getItem('token');
+  const tokenTime = sessionStorage.getItem('tokenTime');
+  
+  if (!token || !tokenTime) {
+    return null;
+  }
+
+  // Si el token existe en sessionStorage, verificar que no haya pasado más de 5 minutos
+  const elapsed = Date.now() - parseInt(tokenTime);
+  const FIVE_MINUTES = 5 * 60 * 1000;
+  
+  if (elapsed > FIVE_MINUTES) {
+    // Token expirado
+    clearAuthToken();
+    return null;
+  }
+
+  return token;
+}
+
+// Aplicar token guardado al cargar (solo si es válido)
+const saved = getValidToken();
+if (saved) {
+  setAuthToken(saved);
+}
