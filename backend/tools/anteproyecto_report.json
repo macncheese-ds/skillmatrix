@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "anteproyecto": "c:\\app\\skillmatrix\\Anteproyecto_Desarrollo_Aplicaciones_Web.pdf",
+    "programa": "c:\\app\\skillmatrix\\Programa_Desarrollo de Aplicaciones Web_828 2.pdf",
+    "generatedAt": "2025-11-09T05:03:24.484Z"
+  },
+  "checks": [
+    {
+      "item": "titulo",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "objetivos",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "justificacion",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "alcance",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "metodologia",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "temario",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "cronograma",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "resultados",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "entregables",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "bibliografia",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "evaluacion",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    },
+    {
+      "item": "introduccion",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "programaMatches": []
+    }
+  ],
+  "extra": {
+    "temasCountInProg": 0,
+    "temasCountInAnte": 0
+  }
+}

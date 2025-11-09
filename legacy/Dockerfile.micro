@@ -1,0 +1,5 @@
+FROM node:20-alpine
+WORKDIR /app
+COPY microservice.js ./
+EXPOSE 6000
+CMD ["node", "microservice.js"]
