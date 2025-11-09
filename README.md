@@ -2,7 +2,7 @@
 
 SkillMatrix es una plataforma web para la gestión de habilidades, empleados y su matriz de competencias. Permite registrar, editar y consultar empleados, gestionar visualmente sus habilidades, subir fotos y controlar el acceso mediante autenticación y roles.
 
-**✨ Totalmente optimizado para dispositivos móviles** - Experiencia fluida en smartphones, tablets y desktop.
+**Totalmente optimizado para dispositivos móviles** - Experiencia fluida en smartphones, tablets y desktop.
 
 ---
 
@@ -26,24 +26,24 @@ SkillMatrix permite a las organizaciones gestionar la información de sus emplea
 
 ## Características
 
-### 🎯 Funcionalidades Principales
-- ✅ Gestión completa de empleados (CRUD)
-- ✅ Matriz visual de habilidades y certificaciones
-- ✅ Sistema de autenticación con JWT
-- ✅ Control de acceso por roles (Admin, Operador, Guest)
-- ✅ Carga y gestión de fotos de empleados
-- ✅ Búsqueda y filtrado de empleados
-- ✅ Vista resumen y detalle de competencias
-- ✅ Niveles de certificación (0-4): Sin certificación, Básico, Intermedio, Avanzado, Experto
+###  Funcionalidades Principales
+-  Gestión completa de empleados (CRUD)
+- Matriz visual de habilidades y certificaciones
+- Sistema de autenticación con JWT
+-  Control de acceso por roles (Admin, Operador, Guest)
+- Carga y gestión de fotos de empleados
+-  Búsqueda y filtrado de empleados
+- Vista resumen y detalle de competencias
+-  Niveles de certificación (0-4): Sin certificación, Básico, Intermedio, Avanzado, Experto
 
-### 📱 Optimización Móvil
-- ✅ Diseño responsivo mobile-first
-- ✅ Touch targets optimizados (44x44px mínimo)
-- ✅ Tipografía escalable según dispositivo
-- ✅ Layouts adaptativos para todos los tamaños
-- ✅ Interacciones táctiles mejoradas
-- ✅ Performance optimizado
-- ✅ Compatible con iOS 12+ y Android 8+
+###  Optimización Móvil
+- Diseño responsivo mobile-first
+- Touch targets optimizados (44x44px mínimo)
+- Tipografía escalable según dispositivo
+- Layouts adaptativos para todos los tamaños
+- Interacciones táctiles mejorada
+- Performance optimizado
+-  Compatible con iOS 12+ y Android 8+
 
 ## Tecnologías Utilizadas
 - **Backend:** Node.js, Express, SQLite, JWT, Multer
@@ -93,10 +93,10 @@ skillmatrix/
 ## Uso Básico
 Accede a la interfaz web en `http://localhost:5173` (o el puerto configurado). Inicia sesión con un usuario registrado o crea uno usando los scripts de backend.
 
-### 🖥️ Acceso desde Escritorio
+###  Acceso desde Escritorio
 Navega a la URL en tu navegador preferido (Chrome, Firefox, Safari, Edge)
 
-### 📱 Acceso desde Móvil
+### Acceso desde Móvil
 1. Asegúrate de estar en la misma red que el servidor
 2. Accede desde tu dispositivo móvil usando la IP del servidor
 3. La interfaz se adaptará automáticamente al tamaño de tu pantalla
@@ -109,10 +109,10 @@ La aplicación está completamente optimizada para dispositivos móviles pequeñ
 - **[MOBILE_OPTIMIZATIONS.md](./MOBILE_OPTIMIZATIONS.md)** - Documentación técnica completa
 
 ### Dispositivos Soportados
-- 📱 Smartphones (320px - 767px)
-- 📱 Phablets (768px - 1023px)
-- 💻 Tablets (1024px+)
-- 🖥️ Desktop (1280px+)
+- Smartphones (320px - 767px)
+-Phablets (768px - 1023px)
+- Tablets (1024px+)
+- Desktop (1280px+)
 
 ### Características Móviles
 - Layouts que colapsan a una columna en móviles
