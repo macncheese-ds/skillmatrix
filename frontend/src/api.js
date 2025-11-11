@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-// Default to local backend during development when no VITE_API_URL is set
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://10.229.52.220:5000/api';
 
 export const api = axios.create({ baseURL: API_URL });
 

@@ -20,7 +20,7 @@ const normalizeNumEmpleado = (numEmpleado) => {
 // Mapeo de roles de credenciales a roles de skillmatrix
 const mapRole = (credRole) => {
   const upperRole = (credRole || '').toUpperCase();
-  if (upperRole === 'THE GOAT' || upperRole === 'ADMINISTRADOR') return 'admin';
+  if (upperRole === 'THE GOAT' || upperRole === 'ADMINISTRADOR' || upperRole === 'RECURSOS HUMANOS') return 'admin';
   if (upperRole === 'LIDER' || upperRole === 'OPERADOR') return 'operador';
   return 'guest';
 };

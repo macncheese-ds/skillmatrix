@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api.js';
 
-const Dashboard = ({ user, setActiveTab, navigate }) => {
+const Dashboard = ({ user }) => {
   const [stats, setStats] = useState({
     totalEmpleados: 0,
     totalProcesos: 0,
@@ -206,18 +206,14 @@ const Dashboard = ({ user, setActiveTab, navigate }) => {
             Accesos Rápidos
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button
-              onClick={() => { if (setActiveTab) setActiveTab('matriz'); }}
-              className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg transition-colors text-left">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg transition-colors text-left">
               <div className="font-semibold mb-1">Ver Matriz Completa</div>
               <div className="text-sm text-blue-200">Consultar habilidades</div>
             </button>
             
             {/* Solo para admin y operador */}
             {(user.rol === 'admin' || user.rol === 'operador') && (
-              <button
-                onClick={() => { if (setActiveTab) setActiveTab('empleados'); }}
-                className="bg-teal-700 hover:bg-teal-800 text-white p-4 rounded-lg transition-colors text-left">
+              <button className="bg-teal-700 hover:bg-teal-800 text-white p-4 rounded-lg transition-colors text-left">
                 <div className="font-semibold mb-1">Gestionar Empleados</div>
                 <div className="text-sm text-teal-100">Agregar o editar</div>
               </button>
@@ -226,18 +222,11 @@ const Dashboard = ({ user, setActiveTab, navigate }) => {
             {/* Solo para admin */}
             {user.rol === 'admin' && (
               <>
-                <button
-                  onClick={() => { if (setActiveTab) setActiveTab('reportes'); }}
-                  className="bg-indigo-700 hover:bg-indigo-800 text-white p-4 rounded-lg transition-colors text-left">
+                <button className="bg-indigo-700 hover:bg-indigo-800 text-white p-4 rounded-lg transition-colors text-left">
                   <div className="font-semibold mb-1">Ver Reportes</div>
                   <div className="text-sm text-indigo-100">Análisis y gráficas</div>
                 </button>
-                <button
-                  onClick={() => {
-                    // Exportar: navigate to reportes and (future) trigger export
-                    if (setActiveTab) setActiveTab('reportes');
-                  }}
-                  className="bg-slate-700 hover:bg-slate-800 text-white p-4 rounded-lg transition-colors text-left">
+                <button className="bg-slate-700 hover:bg-slate-800 text-white p-4 rounded-lg transition-colors text-left">
                   <div className="font-semibold mb-1">Exportar Datos</div>
                   <div className="text-sm text-slate-200">Descargar información</div>
                 </button>

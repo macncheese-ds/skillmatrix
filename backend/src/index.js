@@ -12,8 +12,6 @@ import authRoutes from './routes/auth.js';
 import empleadoRoutes from './routes/empleados.js';
 import uploadRoutes from './routes/upload.js';
 import procesosRoutes from './routes/procesos.js';
-import xmlRoutes from './routes/xml.js';
-import webserviceRoutes from './routes/webservice.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -110,8 +108,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/empleados', empleadoRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/procesos', procesosRoutes);
-app.use('/api/export', xmlRoutes);
-app.use('/api/webservice', webserviceRoutes);
 
 // Crea admin por única vez: username=admin, pass=admin123
 app.post('/api/dev/seed-admin', async (req, res) => {
