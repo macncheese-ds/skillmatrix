@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "generatedAt": "2025-11-09T05:04:42.878Z",
+    "ante": "c:\\app\\skillmatrix\\Anteproyecto_Desarrollo_Aplicaciones_Web.pdf",
+    "programa": "c:\\app\\skillmatrix\\Programa_Desarrollo de Aplicaciones Web_828 2.pdf"
+  },
+  "checks": [
+    {
+      "item": "Título / Tema",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": true,
+      "progMatches": [
+        {
+          "pattern": "tema",
+          "index": 100775,
+          "snippet": "óû\u0002\u0001næ·\u0005@\u0005là·%blà·%\u0002gp7óû\u0012ókùmà÷üùmà7\"­î©üv©­\u0004¿ý=ñ¬û_\u0019´\u0012\u0014 endstream endobj 42 0 obj <</title(facultad de sistemas, u.a. de c.) /author(þÿ\u0000i\u0000n\u0000g\u0000.\u0000 \u0000j\u0000u\u0000a\u0000n\u0000 \u0000j\u0000o\u0000s\u0000é\u0000 \u0000c\u0000o\u0000n\u0000t\u0000r\u0000e\u0000r\u0000a\u0000s) /subject(þÿ\u0000d\u0000i\u0000s\u0000e\u0000ñ\u0000o\u0000 \u0000d\u0000e\u0000 \u0000m\u0000a\u0000t\u0000e\u0000r"
+        }
+      ]
+    },
+    {
+      "item": "Objetivos",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Justificación",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Alcance",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Metodología",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Temario / Unidades",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Cronograma",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Resultados / Competencias",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Entregables / Productos",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Bibliografía / Referencias",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Evaluación / Criterios",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    },
+    {
+      "item": "Introducción / Descripción",
+      "presentInAnte": false,
+      "anteMatches": [],
+      "presentInPrograma": false,
+      "progMatches": []
+    }
+  ]
+}
