@@ -45,7 +45,7 @@ const ImageUploader = ({ currentImage, onImageChange, empleadoId = null }) => {
       const formData = new FormData();
       formData.append('image', file);
 
-  const response = await fetch('http://10.229.52.220:5000/api/upload/upload', {
+      const response = await fetch('http://10.229.52.148:5000/api/upload/upload', {
         method: 'POST',
         body: formData,
       });
@@ -55,11 +55,11 @@ const ImageUploader = ({ currentImage, onImageChange, empleadoId = null }) => {
       }
 
       const data = await response.json();
-      
+
       // Construir URL completa para mostrar la imagen
-  const fullImageUrl = `http://10.229.52.220:5000${data.imageUrl}`;
+      const fullImageUrl = `http://10.229.52.148:5000${data.imageUrl}`;
       setPreviewImage(fullImageUrl);
-      
+
       // Notificar al componente padre
       if (onImageChange) {
         onImageChange(fullImageUrl);

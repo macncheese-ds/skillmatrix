@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://10.229.52.220:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://10.229.52.148:5000/api';
 
 export const api = axios.create({ baseURL: API_URL });
 
@@ -31,7 +31,7 @@ export function clearAuthToken() {
 export function getValidToken() {
   const token = sessionStorage.getItem('token');
   const tokenTime = sessionStorage.getItem('tokenTime');
-  
+
   if (!token || !tokenTime) {
     return null;
   }
@@ -39,7 +39,7 @@ export function getValidToken() {
   // Si el token existe en sessionStorage, verificar que no haya pasado más de 5 minutos
   const elapsed = Date.now() - parseInt(tokenTime);
   const FIVE_MINUTES = 5 * 60 * 1000;
-  
+
   if (elapsed > FIVE_MINUTES) {
     // Token expirado
     clearAuthToken();
